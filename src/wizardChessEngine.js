@@ -1160,10 +1160,13 @@ export function initWizardChess() {
       const loaderText = document.getElementById('loader-text');
       const totalItems = PIECE_TYPES.length + 1;
 
+      const rawBase = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) || './';
+      const assetBase = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+
       async function loadGltfModel(baseName) {
         let arrayBuffer = null;
         try {
-          const resB64 = await fetch(`./assets/glb/${baseName}.glb.gz.b64`);
+          const resB64 = await fetch(`${assetBase}assets/glb/${baseName}.glb.gz.b64`);
           if (resB64.ok) {
             const b64Text = (await resB64.text()).trim();
             if (b64Text.length > 64) {
@@ -1180,13 +1183,13 @@ export function initWizardChess() {
         } catch (e) {}
 
         if (!arrayBuffer) {
-          const resGlb = await fetch(`./assets/glb/${baseName}.glb`);
+          const resGlb = await fetch(`${assetBase}assets/glb/${baseName}.glb`);
           if (!resGlb.ok) throw new Error(`Failed to fetch ${baseName}`);
           arrayBuffer = await resGlb.arrayBuffer();
         }
 
         return new Promise((resolve, reject) => {
-          gltfLoader.parse(arrayBuffer, './assets/glb/', (gltf) => resolve(gltf), (err) => reject(err));
+          gltfLoader.parse(arrayBuffer, `${assetBase}assets/glb/`, (gltf) => resolve(gltf), (err) => reject(err));
         });
       }
       let loadedCount = 0;
